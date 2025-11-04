@@ -18,12 +18,14 @@ export default {
     ios: {
       supportsTablet: true,
       bundleIdentifier: 'com.japjyot.practicePocs',
+      googleServicesFile: './GoogleService-Info.plist',
     },
     android: {
       adaptiveIcon: {
         foregroundImage: './assets/images/adaptive-icon.png',
         backgroundColor: '#ffffff',
       },
+      googleServicesFile: process.env.GOOGLE_SERVICES_JSON ?? './google-services.json',
       edgeToEdgeEnabled: true,
       predictiveBackGestureEnabled: false,
       package: 'com.japjyot.practicePocs',
@@ -36,9 +38,24 @@ export default {
     plugins: [
       'expo-router',
       "./plugins/withNotifeeMavenRepo",
+      "@react-native-firebase/app",
+      "@react-native-firebase/messaging",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ]
     ],
     experiments: {
       typedRoutes: true,
     },
+    extra: {
+      eas: {
+        projectId: "384387dd-cb6f-4069-9636-8cae9802ed88"
+      }
+    }
   },
 };

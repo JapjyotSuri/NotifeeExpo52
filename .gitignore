@@ -39,3 +39,8 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+
+google-services.json
+GoogleService-Info.plist
+notifeepoc-firebase-adminsdk-fbsvc-8d427aba66.json
