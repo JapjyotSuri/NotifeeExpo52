@@ -8,8 +8,7 @@ import { Platform } from "react-native";
 async function onMessageReceived(message: any) {
   const channelId = await createNotificationChannel();
   console.log("message", message);
-  console.log("title in message", message?.notification?.title);
-
+  // Displaying the notification using notifee
   await notifee.displayNotification({
     title: message?.data?.title || "",
     body: message?.data?.body || "",
@@ -20,7 +19,6 @@ async function onMessageReceived(message: any) {
       },
       colorized: true,
       color: '#137ed9',
-      // Optional: Add icon, color, etc.
       style: {
         type: AndroidStyle.BIGTEXT,
         text: message?.data?.body || "",
@@ -37,18 +35,11 @@ async function onMessageReceived(message: any) {
   });
 }
 
-
 const getFCMToken = async () => {
   const token = await messaging().getToken();
   console.log("FCM Token:", token);
 };
-notifee.onBackgroundEvent(async ({ type, detail }) => {
-  const { notification, pressAction } = detail;
-  if (type === EventType.PRESS) {
-    console.log("Notification pressed in background:", notification);
-    // navigate if needed
-  }
-});
+
 const createNotificationChannel = async () => {
   if (Platform.OS === "android") {
     const channelId = await notifee.createChannel({
@@ -125,16 +116,49 @@ const requestUserPermission = async () => {
 
 export default function useNotifications() {
   const router = useRouter();
+  // Getting the initial notification if the app is opened from a notification in kill state
+  async function initialNotificationHandler() {
+    const initialNotification = await notifee.getInitialNotification();
+    console.log("initialNotification", initialNotification);
+    if (initialNotification) {
+      router.push(('/(tabs)' as any));
+    }
+  }
+
 
   useEffect(() => {
     // Request user permission for notifications
     requestUserPermission();
     createNotificationChannel();
+    initialNotificationHandler()
     const unsubscribe = messaging().onMessage(onMessageReceived);
+    // const subscription = AppState.addEventListener('change', (nextAppState) => {
+    //   if (nextAppState === 'active') {
+    //     // App came to foreground, check for pending navigation
+    //     const pendingNav = getNotificationNav();
+    //     console.log("App came to foreground, checking nav:", pendingNav);
+    //     if (pendingNav) {
+    //       router.push(pendingNav);
+    //       setNotificationNav(null); // Clear after using
+    //     }
+    //   }
+    // });
+    // Handling foreground notifications (when app is open)
+    const foregroundSubscription = notifee.onForegroundEvent(({ type, detail }) => {
+      console.log("type", type);
+      switch (type) {
+        case EventType.PRESS:
+          console.log('User pressed notification', detail.notification);
+          router.push('/(tabs)');
+          break;
+      }
+    });
     // Handle foreground notifications (when app is open)
     return () => {
       // Cleanup when component unmounts or dependency changes
       unsubscribe();
+      // subscription.remove();
+      foregroundSubscription()
     };
   }, [router]);
 

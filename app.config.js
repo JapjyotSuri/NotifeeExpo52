@@ -9,7 +9,6 @@ export default {
     icon: './assets/images/icon.png',
     scheme: 'practicepocs',
     userInterfaceStyle: 'automatic',
-    newArchEnabled: true,
     splash: {
       image: './assets/images/splash-icon.png',
       resizeMode: 'contain',
@@ -26,7 +25,7 @@ export default {
         backgroundColor: '#ffffff',
       },
       googleServicesFile: process.env.GOOGLE_SERVICES_JSON ?? './google-services.json',
-      edgeToEdgeEnabled: true,
+      softwareKeyboardLayoutMode: 'pan',
       predictiveBackGestureEnabled: false,
       package: 'com.japjyot.practicePocs',
     },

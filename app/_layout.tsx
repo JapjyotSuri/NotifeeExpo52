@@ -1,70 +1,20 @@
+import { useColorScheme } from "@/components/useColorScheme";
 import useNotifications from "@/hook/useNotifications";
+import store from "@/redux";
+import { useAppSelector } from "@/redux/redux.types";
+
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import notifee from "@notifee/react-native";
-import {
-  AndroidImportance,
-  AndroidStyle,
-} from "@notifee/react-native/dist/types/NotificationAndroid";
-import messaging from "@react-native-firebase/messaging";
 import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
-import { Platform } from "react-native";
 import "react-native-reanimated";
-
-const createNotificationChannel = async () => {
-  if (Platform.OS === "android") {
-    const channelId = await notifee.createChannel({
-      id: "default",
-      name: "Default Channel",
-      importance: AndroidImportance.HIGH,
-      vibration: true,
-      sound: "default",
-    });
-    return channelId;
-  }
-  return "ios";
-};
-
-messaging().setBackgroundMessageHandler(async (message: any) => {
-  console.log("message in background", message);
-  const channelId = await createNotificationChannel();
-  console.log("title in message", message?.notification?.title);
-    
-  await notifee.displayNotification({
-    title: message?.data?.title || "",
-    body: message?.data?.body || "",
-    android: {
-      channelId,
-      pressAction: {
-        id: "default",
-      },
-      colorized: true,
-      color: "#137ed9",
-      // Optional: Add icon, color, etc.
-      style: {
-        type: AndroidStyle.BIGTEXT,
-        text: message?.data?.body || "",
-      },
-    },
-    ios: {
-      sound: "default",
-      foregroundPresentationOptions: {
-        alert: true,
-        badge: true,
-        sound: true,
-      },
-    },
-  });
-});
-
-import { useColorScheme } from "@/components/useColorScheme";
+import { Provider } from "react-redux";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -95,17 +45,32 @@ export default function RootLayout() {
     return null;
   }
 
-  return <RootLayoutNav />;
+  return (
+    <Provider store={store}>
+      <RootLayoutNav />
+    </Provider>
+  );
 }
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
+  const pendingNavigationPath = useAppSelector(
+    (state) => state.navigation.pendingNavigationPath
+  );
+  const router = useRouter();
+  useEffect(() => {
+    if (pendingNavigationPath) {
+      console.log("pendingNavigationPath", pendingNavigationPath);
+      router.push(pendingNavigationPath as any);
+    }
+  }, [pendingNavigationPath]);
   useNotifications();
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="test" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: "modal" }} />
       </Stack>
     </ThemeProvider>
