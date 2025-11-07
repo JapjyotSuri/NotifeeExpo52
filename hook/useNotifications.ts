@@ -13,8 +13,15 @@ const getFCMToken = async () => {
   const token = await messaging().getToken();
   console.log("FCM Token:", token);
 };
-
-
+// Subscribing the device to a Firebase Cloud Messaging topic to receive targeted notifications
+const subscribeToTopic = async () => {
+  const topic = process.env.EXPO_PUBLIC_NOTIFICATION_TOPIC;
+  try {
+    await messaging().subscribeToTopic(topic ?? "");
+  } catch (error) {
+    console.error('Subscription error:', error);
+  }
+};
 
 async function onMessageReceived(message: FirebaseMessagingTypes.RemoteMessage) {
   const channelId = await createNotificationChannel();
@@ -51,6 +58,7 @@ const requestUserPermission = async () => {
 
     if (permission.authorizationStatus === 1) {
       getFCMToken();
+      subscribeToTopic();
     }
   } catch (error) {
     console.log("Error requesting notification permission:", error);
