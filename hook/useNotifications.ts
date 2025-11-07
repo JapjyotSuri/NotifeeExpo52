@@ -10,8 +10,12 @@ import { useEffect } from "react";
 
 //Fetching the device's FCM token from Firebase
 const getFCMToken = async () => {
-  const token = await messaging().getToken();
-  console.log("FCM Token:", token);
+  try {
+    const token = await messaging().getToken();
+    console.log("FCM Token:", token);
+  } catch (error) {
+    console.error('Error fetching FCM token:', error);
+  }
 };
 // Subscribing the device to a Firebase Cloud Messaging topic to receive targeted notifications
 const subscribeToTopic = async () => {
