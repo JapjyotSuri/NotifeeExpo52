@@ -1,8 +1,6 @@
-import { Button, StyleSheet } from "react-native";
-
 import EditScreenInfo from "@/components/EditScreenInfo";
 import { Text, View } from "@/components/Themed";
-import { router } from "expo-router";
+import { StyleSheet } from "react-native";
 
 export default function TabOneScreen() {
   return (
@@ -14,7 +12,6 @@ export default function TabOneScreen() {
         darkColor="rgba(255,255,255,0.1)"
       />
       <EditScreenInfo path="app/(tabs)/index.tsx" />
-      <Button title="Route back" onPress={() => router.push("/test")} />
     </View>
   );
 }

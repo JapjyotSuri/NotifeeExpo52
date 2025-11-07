@@ -1,8 +1,5 @@
 import { useColorScheme } from "@/components/useColorScheme";
 import useNotifications from "@/hook/useNotifications";
-import store from "@/redux";
-import { useAppSelector } from "@/redux/redux.types";
-
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import {
   DarkTheme,
@@ -10,11 +7,10 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack, useRouter } from "expo-router";
+import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
-import { Provider } from "react-redux";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -45,32 +41,17 @@ export default function RootLayout() {
     return null;
   }
 
-  return (
-    <Provider store={store}>
-      <RootLayoutNav />
-    </Provider>
-  );
+  return <RootLayoutNav />;
 }
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
-  const pendingNavigationPath = useAppSelector(
-    (state) => state.navigation.pendingNavigationPath
-  );
-  const router = useRouter();
-  useEffect(() => {
-    if (pendingNavigationPath) {
-      console.log("pendingNavigationPath", pendingNavigationPath);
-      router.push(pendingNavigationPath as any);
-    }
-  }, [pendingNavigationPath]);
   useNotifications();
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="test" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: "modal" }} />
       </Stack>
     </ThemeProvider>

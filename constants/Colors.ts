@@ -1,6 +1,6 @@
 const tintColorLight = '#2f95dc';
 const tintColorDark = '#fff';
-
+export const NOTIFICATION_COLOR = '#137ed9';
 export default {
   light: {
     text: '#000',
