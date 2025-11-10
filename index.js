@@ -7,20 +7,29 @@ import messaging from "@react-native-firebase/messaging";
 messaging().setBackgroundMessageHandler(async (remoteMessage) => {
   console.log("Message handled in the background!", remoteMessage);
   const channelId = await createNotificationChannel();
-  // Displaying the notification using notifee
+  // Displaying the notification using notifee with fix for showing style in dark mode
   await notifee.displayNotification({
-    title: remoteMessage?.data?.title || "",
-    body: remoteMessage?.data?.body || "",
+    title: remoteMessage?.data?.title,
     android: {
       channelId,
       pressAction: {
         id: "default",
       },
-      colorized: true,
       color: NOTIFICATION_COLOR,
+      colorized: true,
+      timestamp: Date.now(),
+      showTimestamp: true,
       style: {
-        type: AndroidStyle.BIGTEXT,
-        text: remoteMessage?.data?.body || "",
+        type: AndroidStyle.MESSAGING,
+        person: {
+          name: remoteMessage?.data?.title || "",
+        },
+        messages: [
+          {
+            text: remoteMessage?.data?.body || "",
+            timestamp: Date.now(),
+          },
+        ],
       },
     },
     ios: {
@@ -33,5 +42,6 @@ messaging().setBackgroundMessageHandler(async (remoteMessage) => {
     },
   });
 });
+
 //Ensuring app navigation is properly initialized
 import "expo-router/entry";

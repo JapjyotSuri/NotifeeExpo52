@@ -2,7 +2,7 @@ import 'dotenv/config';
 
 export default {
   expo: {
-    name: 'practicePocs',
+    name: 'notifeePoc',
     slug: 'practicePocs',
     version: '1.0.0',
     orientation: 'portrait',

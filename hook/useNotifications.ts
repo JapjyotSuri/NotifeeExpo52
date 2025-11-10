@@ -1,9 +1,6 @@
 import { NOTIFICATION_COLOR } from "@/constants/Colors";
 import { createNotificationChannel } from "@/utils/notificationChannelUtil";
-import notifee, { EventType } from "@notifee/react-native";
-import {
-  AndroidStyle
-} from "@notifee/react-native/dist/types/NotificationAndroid";
+import notifee, { AndroidStyle, EventType } from "@notifee/react-native";
 import messaging, { FirebaseMessagingTypes } from "@react-native-firebase/messaging";
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
@@ -29,20 +26,31 @@ const subscribeToTopic = async () => {
 
 async function onMessageReceived(message: FirebaseMessagingTypes.RemoteMessage) {
   const channelId = await createNotificationChannel();
-  // Displaying the notification using notifee
+
+  //Displaying the notification using notifee with fix for showing style in dark mode
   await notifee.displayNotification({
     title: message?.data?.title as string || "",
-    body: message?.data?.body as string || "",
     android: {
-      channelId,
+      channelId, 
       pressAction: {
         id: "default",
       },
-      colorized: true,
       color: NOTIFICATION_COLOR,
+      colorized: true,
+      timestamp: Date.now(), 
+      showTimestamp: true,   
       style: {
-        type: AndroidStyle.BIGTEXT,
-        text: message?.data?.body as string || "",
+        type: AndroidStyle.MESSAGING,
+        person: {
+          name: message?.data?.title as string || "",
+        },
+        messages: [
+          {
+            text: message?.data?.body as string || "",
+            timestamp: Date.now(), 
+          },
+          
+        ],
       },
     },
     ios: {
