@@ -28,10 +28,14 @@ const subscribeToTopic = async () => {
 };
 
 async function onMessageReceived(message: FirebaseMessagingTypes.RemoteMessage) {
+  try {
   const channelId = await createNotificationChannel();
-  // Displaying the notification using notifee
+  const response = await fetch("https://notifee-mockserver-7yjverznv-japjyotsuris-projects.vercel.app/user");
+    const data = await response.json();
+    console.log("data", data);
+  //Displaying the notification using notifee
   await notifee.displayNotification({
-    title: message?.data?.title as string || "",
+    title: `${message?.data?.title} ${data?.name || "Jap"}` || "",
     body: message?.data?.body as string || "",
     android: {
       channelId,
@@ -54,7 +58,12 @@ async function onMessageReceived(message: FirebaseMessagingTypes.RemoteMessage) 
       },
     },
   });
+} catch (error) {
+  console.error('Notification display error:', error);
 }
+}
+
+
 
 const requestUserPermission = async () => {
   try {

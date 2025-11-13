@@ -2,8 +2,8 @@ import 'dotenv/config';
 
 export default {
   expo: {
-    name: 'practicePocs',
-    slug: 'practicePocs',
+    name: 'notifeePoc',
+    slug: 'notifee',
     version: '1.0.0',
     orientation: 'portrait',
     icon: './assets/images/icon.png',
@@ -53,7 +53,7 @@ export default {
     },
     extra: {
       eas: {
-        projectId: "384387dd-cb6f-4069-9636-8cae9802ed88"
+        projectId: "2beef970-341d-4e22-8179-dbd7338d92e8"
       }
     }
   },

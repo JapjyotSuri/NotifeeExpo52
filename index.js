@@ -7,9 +7,13 @@ import messaging from "@react-native-firebase/messaging";
 messaging().setBackgroundMessageHandler(async (remoteMessage) => {
   console.log("Message handled in the background!", remoteMessage);
   const channelId = await createNotificationChannel();
+  //Added a mock server to fetch data of user
+  const response = await fetch("https://notifee-mockserver-7yjverznv-japjyotsuris-projects.vercel.app/user");
+  const data = await response.json();
+  console.log("data in index", data);
   // Displaying the notification using notifee
   await notifee.displayNotification({
-    title: remoteMessage?.data?.title || "",
+    title: `${remoteMessage?.data?.title} ${data?.name || "Jap"}` || "",
     body: remoteMessage?.data?.body || "",
     android: {
       channelId,
