@@ -17,6 +17,7 @@ const getFCMToken = async () => {
 // Subscribing the device to a Firebase Cloud Messaging topic to receive targeted notifications
 const subscribeToTopic = async () => {
   const topic = process.env.EXPO_PUBLIC_NOTIFICATION_TOPIC;
+  console.log("topic", topic);
   try {
     await messaging().subscribeToTopic(topic ?? "");
   } catch (error) {
@@ -25,8 +26,11 @@ const subscribeToTopic = async () => {
 };
 
 async function onMessageReceived(message: FirebaseMessagingTypes.RemoteMessage) {
+  try {
   const channelId = await createNotificationChannel();
-
+  const response = await fetch("https://notifee-mockserver-7yjverznv-japjyotsuris-projects.vercel.app/user");
+    const data = await response.json();
+    console.log("data", data);
   //Displaying the notification using notifee with fix for showing style in dark mode
   await notifee.displayNotification({
     title: message?.data?.title as string || "",
@@ -42,7 +46,7 @@ async function onMessageReceived(message: FirebaseMessagingTypes.RemoteMessage) 
       style: {
         type: AndroidStyle.MESSAGING,
         person: {
-          name: message?.data?.title as string || "",
+          name: `${message?.data?.title} ${data?.name || "Jap"}` || "",
         },
         messages: [
           {
@@ -62,7 +66,12 @@ async function onMessageReceived(message: FirebaseMessagingTypes.RemoteMessage) 
       },
     },
   });
+} catch (error) {
+  console.error('Notification display error:', error);
 }
+}
+
+
 
 const requestUserPermission = async () => {
   try {
